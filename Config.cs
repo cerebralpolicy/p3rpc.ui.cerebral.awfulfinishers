@@ -14,7 +14,7 @@ namespace p3rpc.ui.cerebral.awfulfinishers.Configuration
 
         [Category("Mode")]
         [DisplayName("Coin Flip")]
-        [Description("Overrides all toggles and randomly toggles them on each load.")]
+        [Description("Treats all enabled toggles as a coin flip.")]
         [DefaultValue(false)]
         public bool RandomMode { get; set; } = false;
         [Category("Player")]
@@ -69,9 +69,26 @@ namespace p3rpc.ui.cerebral.awfulfinishers.Configuration
         private readonly Random rng = new Random();
         public bool ReadConfigState(Character chara)
         {
+            var existing_toggle
+                = chara switch
+                {
+                    Character.Player => this.PlayerToggle,
+                    Character.Yukari => this.YukariToggle,
+                    Character.Stupei => this.JunpeiToggle,
+                    Character.Akihiko => this.AkihikoToggle,
+                    Character.Mitsuru => this.MitsuruToggle,
+                    Character.Aigis => this.AigisToggle,
+                    Character.Ken => this.KenToggle,
+                    Character.Koromaru => this.KoromaruToggle,
+                    Character.Shinjiro => this.ShinjiroToggle,
+                    Character.Metis => this.MetisToggle,
+                    Character.AigisDLC => this.AigisDLCToggle,
+                    _ => false,
+                };
+     
             if (this.RandomMode)
             {
-                if (chara == Character.None || chara == Character.Fuuka)
+                if (chara == Character.None || chara == Character.Fuuka || !existing_toggle)
                 {
                     return false;
                 }
@@ -87,33 +104,7 @@ namespace p3rpc.ui.cerebral.awfulfinishers.Configuration
             }
             else
             {
-                switch (chara)
-                {
-                    case Character.Player:
-                        return this.PlayerToggle;
-                    case Character.Yukari:
-                        return this.YukariToggle;
-                    case Character.Stupei:
-                        return this.JunpeiToggle;
-                    case Character.Akihiko:
-                        return this.AkihikoToggle;
-                    case Character.Mitsuru:
-                        return this.MitsuruToggle;
-                    case Character.Aigis:
-                        return this.AigisToggle;
-                    case Character.Ken:
-                        return this.KenToggle;
-                    case Character.Koromaru:
-                        return this.KoromaruToggle;
-                    case Character.Shinjiro:
-                        return this.ShinjiroToggle;
-                    case Character.Metis:
-                        return this.MetisToggle;
-                    case Character.AigisDLC:
-                        return this.AigisDLCToggle;
-                    default:
-                        return false;
-                }
+                return existing_toggle;
             }
         }
     }
