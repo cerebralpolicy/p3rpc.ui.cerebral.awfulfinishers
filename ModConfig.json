@@ -2,7 +2,7 @@
   "ModId": "p3rpc.ui.cerebral.awfulfinishers",
   "ModName": "Cerebral's Really Awful Finishers",
   "ModAuthor": "CerebralPolicy",
-  "ModVersion": "1.0.0",
+  "ModVersion": "1.1.1",
   "ModDescription": "A mod NOBODY asked for.",
   "ModDll": "p3rpc.ui.cerebral.awfulfinishers.dll",
   "ModIcon": "CRAF_Preview.png",
@@ -16,7 +16,8 @@
   "IsUniversalMod": false,
   "ModDependencies": [
     "reloaded.sharedlib.hooks",
-    "unrealessentials.interfaces"
+    "UnrealEssentials",
+    "Unreal.ObjectsEmitter.Reloaded"
   ],
   "OptionalDependencies": [],
   "SupportedAppId": [
