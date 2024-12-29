@@ -178,15 +178,15 @@ param (
     $GitHubFallbackPattern = "", # For migrating from legacy build script.
     $GitHubInheritVersionFromTag = $True, # Uses version determined from release tag as opposed to metadata file in latest release.
 
-    $GameBananaItemId = 333681, # From mod page URL.
+    $GameBananaItemId = 502869, # From mod page URL.
 
     $NuGetPackageId = "p3rpc.ui.cerebral.awfulfinishers",
     $NuGetFeedUrl = "http://packages.sewer56.moe:5000/v3/index.json",
     $NuGetAllowUnlisted = $False,
 
     ## => User: Publish Config
-    $PublishGeneric    = $True,
-    $PublishNuGet      = $True,
+    $PublishGeneric    = $False,
+    $PublishNuGet      = $False,
     $PublishGameBanana = $True
 )
 

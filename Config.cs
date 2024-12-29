@@ -1,122 +1,128 @@
 ﻿using p3rpc.ui.cerebral.awfulfinishers.Template.Configuration;
 using Reloaded.Mod.Interfaces.Structs;
 using System.ComponentModel;
+using p3rpc.ui.cerebral.awfulfinishers.Types;
 
 namespace p3rpc.ui.cerebral.awfulfinishers.Configuration
 {
     public class Config : Configurable<Config>
     {
-        /*
-            User Properties:
-                - Please put all of your configurable properties here.
-    
-            By default, configuration saves as "Config.json" in mod user config folder.    
-            Need more config files/classes? See Configuration.cs
-    
-            Available Attributes:
-            - Category
-            - DisplayName
-            - Description
-            - DefaultValue
+        [Category("Developer Settings")]
+        [DisplayName("Log Level")]
+        [DefaultValue(LogLevel.Information)]
+        public LogLevel LogLevel { get; set; } = LogLevel.Information;
 
-            // Technically Supported but not Useful
-            - Browsable
-            - Localizable
-
-            The `DefaultValue` attribute is used as part of the `Reset` button in Reloaded-Launcher.
-        */
-
-        [Category("Protagonist")]
-        [DisplayName("FemC Compatibility Patch")]
-        [Description("Turn this on if you're using Project FemC.")]
+        [Category("Mode")]
+        [DisplayName("Coin Flip")]
+        [Description("Overrides all toggles and randomly toggles them on each load.")]
         [DefaultValue(false)]
-        public bool EnableFemC { get; set; } = false;
-
-        /*
-        [Category("Behavior")]
-        [DisplayName("String")]
-        [Description("This is a string.")]
-        [DefaultValue("Default Name")]
-        public string String { get; set; } = "Default Name";
-
-        [DisplayName("Int")]
-        [Description("This is an int.")]
-        [DefaultValue(42)]
-        public int Integer { get; set; } = 42;
-
-        [DisplayName("Bool")]
-        [Description("This is a bool.")]
+        public bool RandomMode { get; set; } = false;
+        [Category("Player")]
+        [DisplayName("Enable")]
         [DefaultValue(true)]
-        public bool Boolean { get; set; } = true;
+        public bool PlayerToggle { get; set; } = true;
+        [Category("Yukari")]
+        [DisplayName("Enable")]
+        [DefaultValue(true)]
+        public bool YukariToggle { get; set; } = true;
+        [Category("Junpei")]
+        [DisplayName("Enable")]
+        [DefaultValue(true)]
+        public bool JunpeiToggle { get; set; } = true;
+        [Category("Akihiko")]
+        [DisplayName("Enable")]
+        [DefaultValue(true)]
+        public bool AkihikoToggle { get; set; } = true;
+        [Category("Mitsuru")]
+        [DisplayName("Enable")]
+        [DefaultValue(true)]
+        public bool MitsuruToggle { get; set; } = true;
+        [Category("Aigis")]
+        [DisplayName("Enable")]
+        [DefaultValue(true)]
+        public bool AigisToggle { get; set; } = true;
+        [Category("Ken")]
+        [DisplayName("Enable")]
+        [DefaultValue(true)]
+        public bool KenToggle { get; set; } = true;
+        [Category("Koromaru")]
+        [DisplayName("Enable")]
+        [DefaultValue(true)]
+        public bool KoromaruToggle { get; set; } = true;
+        [Category("Shinjiro")]
+        [DisplayName("Enable")]
+        [DefaultValue(true)]
+        public bool ShinjiroToggle { get; set; } = true;
+        [Category("Metis")]
+        [DisplayName("Enable")]
+        [DefaultValue(true)]
+        public bool MetisToggle { get; set; } = true;
+        [Category("Metis")]
+        [DisplayName("Use French")]
+        [DefaultValue(false)]
+        public bool FrenchMetis { get; set; } = false;
+        [Category("Aigis (DLC)")]
+        [DisplayName("Enable")]
+        [DefaultValue(true)]
+        public bool AigisDLCToggle { get; set; } = true;
 
-        [DisplayName("Float")]
-        [Description("This is a floating point number.")]
-        [DefaultValue(6.987654F)]
-        public float Float { get; set; } = 6.987654F;
-
-        [DisplayName("Enum")]
-        [Description("This is an enumerable.")]
-        [DefaultValue(SampleEnum.ILoveIt)]
-        public SampleEnum Reloaded { get; set; } = SampleEnum.ILoveIt;
-
-        public enum SampleEnum
+        public bool ReadConfigState(Character chara)
         {
-            NoOpinion,
-            Sucks,
-            IsMediocre,
-            IsOk,
-            IsCool,
-            ILoveIt
+            if (this.RandomMode)
+            {
+                if (chara == Character.None || chara == Character.Fuuka)
+                {
+                    return false;
+                }
+                var rnd = new Random();
+                var coinFlip = rnd.Next(0, 1) == 1;
+                if (coinFlip)
+                {
+                    Log.Debug($"The finisher screen for {Characters.GetName(chara)} will be modified");
+                    return true;
+                }
+                Log.Debug($"The finisher screen for {Characters.GetName(chara)} will remain as is");
+                return false;
+            }
+            else
+            {
+                switch (chara)
+                {
+                    case Character.Player:
+                        return this.PlayerToggle;
+                    case Character.Yukari:
+                        return this.YukariToggle;
+                    case Character.Stupei:
+                        return this.JunpeiToggle;
+                    case Character.Akihiko:
+                        return this.AkihikoToggle;
+                    case Character.Mitsuru:
+                        return this.MitsuruToggle;
+                    case Character.Aigis:
+                        return this.AigisToggle;
+                    case Character.Ken:
+                        return this.KenToggle;
+                    case Character.Koromaru:
+                        return this.KoromaruToggle;
+                    case Character.Shinjiro:
+                        return this.ShinjiroToggle;
+                    case Character.Metis:
+                        return this.MetisToggle;
+                    case Character.AigisDLC:
+                        return this.AigisDLCToggle;
+                    default:
+                        return false;
+                }
+            }
         }
-
-        [DisplayName("Int Slider")]
-        [Description("This is a int that uses a slider control similar to a volume control slider.")]
-        [DefaultValue(100)]
-        [SliderControlParams(
-            minimum: 0.0,
-            maximum: 100.0,
-            smallChange: 1.0,
-            largeChange: 10.0,
-            tickFrequency: 10,
-            isSnapToTickEnabled: false,
-            tickPlacement: SliderControlTickPlacement.BottomRight,
-            showTextField: true,
-            isTextFieldEditable: true,
-            textValidationRegex: "\\d{1-3}")]
-        public int IntSlider { get; set; } = 100;
-
-        [DisplayName("Double Slider")]
-        [Description("This is a double that uses a slider control without any frills.")]
-        [DefaultValue(0.5)]
-        [SliderControlParams(minimum: 0.0, maximum: 1.0)]
-        public double DoubleSlider { get; set; } = 0.5;
-
-        [DisplayName("File Picker")]
-        [Description("This is a sample file picker.")]
-        [DefaultValue("")]
-        [FilePickerParams(title: "Choose a File to load from")]
-        public string File { get; set; } = "";
-
-        [DisplayName("Folder Picker")]
-        [Description("Opens a file picker but locked to only allow folder selections.")]
-        [DefaultValue("")]
-        [FolderPickerParams(
-            initialFolderPath: Environment.SpecialFolder.Desktop,
-            userCanEditPathText: false,
-            title: "Custom Folder Select",
-            okButtonLabel: "Choose Folder",
-            fileNameLabel: "ModFolder",
-            multiSelect: true,
-            forceFileSystem: true)]
-        public string Folder { get; set; } = "";
-    */
     }
 
-        /// <summary>
-        /// Allows you to override certain aspects of the configuration creation process (e.g. create multiple configurations).
-        /// Override elements in <see cref="ConfiguratorMixinBase"/> for finer control.
-        /// </summary>
-        public class ConfiguratorMixin : ConfiguratorMixinBase
+
+    /// <summary>
+    /// Allows you to override certain aspects of the configuration creation process (e.g. create multiple configurations).
+    /// Override elements in <see cref="ConfiguratorMixinBase"/> for finer control.
+    /// </summary>
+    public class ConfiguratorMixin : ConfiguratorMixinBase
     {
         // 
     }

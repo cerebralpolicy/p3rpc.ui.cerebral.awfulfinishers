@@ -2,7 +2,10 @@
 using p3rpc.ui.cerebral.awfulfinishers.Template;
 using Reloaded.Hooks.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
+using Reloaded.Mod.Interfaces.Internal;
+using Unreal.ObjectsEmitter.Interfaces;
 using UnrealEssentials.Interfaces;
+using p3rpc.ui.cerebral.awfulfinishers.Types;
 
 namespace p3rpc.ui.cerebral.awfulfinishers
 {
@@ -42,6 +45,11 @@ namespace p3rpc.ui.cerebral.awfulfinishers
         /// </summary>
         private readonly IModConfig _modConfig;
 
+        private readonly IUnrealEssentials UnrealEssentials;
+        private readonly IUnreal Unreal;
+
+        private bool UseKotone;
+        const string NAME = "Awful AOAs";
         public Mod(ModContext context)
         {
             _modLoader = context.ModLoader;
@@ -51,6 +59,8 @@ namespace p3rpc.ui.cerebral.awfulfinishers
             _configuration = context.Configuration;
             _modConfig = context.ModConfig;
 
+            Project.Init(_modConfig, _modLoader,_logger);
+            Log.LogLevel = _configuration.LogLevel;
 
             // For more information about this template, please see
             // https://reloaded-project.github.io/Reloaded-II/ModTemplate/
@@ -60,34 +70,115 @@ namespace p3rpc.ui.cerebral.awfulfinishers
 
             // TODO: Implement some mod logic
 
-            var unrealEssentialsController = _modLoader.GetController<IUnrealEssentials>();
-            if (unrealEssentialsController == null || !unrealEssentialsController.TryGetTarget(out var unrealEssentials))
+            this._modLoader.GetController<IUnrealEssentials>().TryGetTarget(out var unrealEssentials);
+            if (unrealEssentials == null)
             {
-                _logger.WriteLine($"[My Mod] Unable to get controller for Unreal Essentials, stuff won't work :(", System.Drawing.Color.Red);
-                return;
+                throw new ArgumentNullException(nameof(unrealEssentials));
             }
+            UnrealEssentials = unrealEssentials;
+            this._modLoader.GetController<IUnreal>().TryGetTarget(out var unreal);
+            if (unreal == null)
+            {
+                throw new ArgumentNullException(nameof(unreal));
+            }
+            Unreal = unreal;
 
             // SET MOD DIRECTORY
             var modDir = _modLoader.GetDirectoryForModId(_modConfig.ModId);
             
             // LOAD BASE
             var partyMemberPath = Path.Combine(modDir, "Common");
-            unrealEssentials.AddFromFolder(partyMemberPath);
+            UnrealEssentials.AddFromFolder(partyMemberPath);
 
             // PLEASE LET THIS WORK
 
-            if (_configuration.EnableFemC)
+            _modLoader.ModLoaded += OnModLoaded;
+
+            _modLoader.OnModLoaderInitialized += OnAllModsLoaded;
+        }
+
+        private void OnAllModsLoaded()
+        {
+            for (int i = 0; i < 13;  i++)
             {
-                var protagPath = Path.Combine(modDir, "Options", "Protagonist", "Female");
-                unrealEssentials.AddFromFolder(protagPath);
-            }
-            else
-            {
-                var protagPath = Path.Combine(modDir, "Options", "Protagonist", "Male");
-                unrealEssentials.AddFromFolder(protagPath);
+                var chara = (Character)i;
+                var shouldRedirect = _configuration.ReadConfigState(chara);
+
+                if (shouldRedirect)
+                {
+                    AssignRedirect(chara);
+                }
             }
         }
 
+       
+
+        private void AssignRedirect(Character character)
+        {
+
+            if (character == Character.None)
+                return;
+            else if (character != Character.Player && character != Character.Metis) 
+            { 
+                var vanillaAsset = GetBaseAOA(character);
+                var awfulAsset = GetAwfulAOA(character);
+                Unreal.AssignFName(NAME, vanillaAsset, awfulAsset);
+            }
+            else if (character == Character.Metis)
+            {
+                var vanillaAsset = GetBaseAOA(character);
+                var awfulAsset = GetAwfulAOA(character);
+                if (_configuration.FrenchMetis)
+                {
+                    awfulAsset = $"{GetAwfulAOA(character)}_FR";
+                }
+                Unreal.AssignFName(NAME, vanillaAsset, awfulAsset);
+            }
+            else
+            {
+                var vanillaAsset = GetBaseAOA(character);
+                var awfulAsset = GetAwfulAOA(character);
+                if (UseKotone)
+                {
+                    awfulAsset = $"{GetAwfulAOA(character)}_FemC";
+                }
+                Unreal.AssignFName(NAME, vanillaAsset, awfulAsset);
+            }
+        } 
+
+        private void OnModLoaded(IModV1 mod, IModConfigV1 config)
+        {
+            if (config.ModId == "p3rpc.femc")
+            {
+                UseKotone = true;
+            }
+        }
+
+
+        public static string GetBaseAOA(Character character)
+        {
+            bool IsAnswerCharacter = character > Character.Shinjiro;
+            if (IsAnswerCharacter)
+                return GetAssetPath($"/Game/Astrea/Battle/Allout/Materials/Finish2D/T_Btl_AlloutFinishText_Pc{character:00}");
+            return GetAssetPath($"/Game/Xrd777/Battle/Allout/Materials/Finish2D/T_Btl_AlloutFinishText_Pc{character:00}");
+        }
+        public static string GetAwfulAOA(Character character)
+            => GetAssetPath($"/Game/Cerebral/UI/Allout/T_Btl_AlloutFinishText_Pc{character:00}");
+        public static string GetAssetPath(string assetFile)
+        {
+            var adjustedPath = assetFile.Replace('\\', '/').Replace(".uasset", string.Empty);
+
+            if (adjustedPath.IndexOf("Content") is int contentIndex && contentIndex > -1)
+            {
+                adjustedPath = adjustedPath.Substring(contentIndex + 8);
+            }
+
+            if (!adjustedPath.StartsWith("/Game/"))
+            {
+                adjustedPath = $"/Game/{adjustedPath}";
+            }
+            return adjustedPath;
+        }
         #region Standard Overrides
         public override void ConfigurationUpdated(Config configuration)
         {

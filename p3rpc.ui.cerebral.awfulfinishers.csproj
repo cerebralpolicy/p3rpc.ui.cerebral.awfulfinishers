@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <LangVersion>10.0</LangVersion>
+    <LangVersion>12.0</LangVersion>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <OutputPath>$(RELOADEDIIMODS)/p3rpc.ui.cerebral.awfulfinishers</OutputPath>
@@ -27,8 +27,6 @@
 
   <ItemGroup>
     <None Remove="ModConfig.json" />
-    <None Remove="Publish.ps1" />
-    <None Remove="BuildLinked.ps1" />
     <None Remove="Reloaded.Trimming.targets" />
     <None Remove="Reloaded.Checks.targets" />
   </ItemGroup>
@@ -37,37 +35,7 @@
     <Content Include="ModConfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Update="Common\P3R\Content\Xrd777\Battle\Allout\Materials\Finish2D\T_Btl_AlloutFinishText_Pc02.uasset">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Common\P3R\Content\Xrd777\Battle\Allout\Materials\Finish2D\T_Btl_AlloutFinishText_Pc03.uasset">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Common\P3R\Content\Xrd777\Battle\Allout\Materials\Finish2D\T_Btl_AlloutFinishText_Pc04.uasset">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Common\P3R\Content\Xrd777\Battle\Allout\Materials\Finish2D\T_Btl_AlloutFinishText_Pc05.uasset">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Common\P3R\Content\Xrd777\Battle\Allout\Materials\Finish2D\T_Btl_AlloutFinishText_Pc07.uasset">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Common\P3R\Content\Xrd777\Battle\Allout\Materials\Finish2D\T_Btl_AlloutFinishText_Pc08.uasset">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Common\P3R\Content\Xrd777\Battle\Allout\Materials\Finish2D\T_Btl_AlloutFinishText_Pc09.uasset">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Common\P3R\Content\Xrd777\Battle\Allout\Materials\Finish2D\T_Btl_AlloutFinishText_Pc10.uasset">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="CRAF_Preview.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Options\Protagonist\Female\P3R\Content\Xrd777\Battle\Allout\Materials\Finish2D\T_Btl_AlloutFinishText_Pc01.uasset">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Options\Protagonist\Male\P3R\Content\Xrd777\Battle\Allout\Materials\Finish2D\T_Btl_AlloutFinishText_Pc01.uasset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Preview.png">
@@ -78,12 +46,21 @@
   <ItemGroup>
     <PackageReference Include="Reloaded.Mod.Interfaces" Version="2.4.0" ExcludeAssets="runtime" />
     <PackageReference Include="Reloaded.SharedLib.Hooks" Version="1.9.0" />
+    <PackageReference Include="RyoTune.Reloaded" Version="1.0.1" />
+    <PackageReference Include="Unreal.ObjectsEmitter.Interfaces" Version="1.2.3" />
     <PackageReference Include="UnrealEssentials.Interfaces" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\" />
-    <Folder Include="Options\Protagonist\Male\" />
+    <Content Include="Common\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Options\**" />
+    <EmbeddedResource Remove="Options\**" />
+    <None Remove="Options\**" />
   </ItemGroup>
 
 </Project>
