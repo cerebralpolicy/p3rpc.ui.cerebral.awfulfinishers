@@ -106,25 +106,25 @@ namespace p3rpc.ui.cerebral.awfulfinishers
 
                 if (shouldRedirect)
                 {
-                    AssignRedirect(chara);
+                    AssignRedirect(i);
                 }
             }
         }
 
        
 
-        private void AssignRedirect(Character character)
+        private void AssignRedirect(int character)
         {
 
-            if (character == Character.None)
+            if (character == 0)
                 return;
-            else if (character != Character.Player && character != Character.Metis) 
+            else if (character != 1 && character != 11) 
             { 
                 var vanillaAsset = GetBaseAOA(character);
                 var awfulAsset = GetAwfulAOA(character);
                 Unreal.AssignFName(NAME, vanillaAsset, awfulAsset);
             }
-            else if (character == Character.Metis)
+            else if (character == 11)
             {
                 var vanillaAsset = GetBaseAOA(character);
                 var awfulAsset = GetAwfulAOA(character);
@@ -155,14 +155,14 @@ namespace p3rpc.ui.cerebral.awfulfinishers
         }
 
 
-        public static string GetBaseAOA(Character character)
+        public static string GetBaseAOA(int character)
         {
-            bool IsAnswerCharacter = character > Character.Shinjiro;
+            bool IsAnswerCharacter = character > 10;
             if (IsAnswerCharacter)
                 return GetAssetPath($"/Game/Astrea/Battle/Allout/Materials/Finish2D/T_Btl_AlloutFinishText_Pc{character:00}");
             return GetAssetPath($"/Game/Xrd777/Battle/Allout/Materials/Finish2D/T_Btl_AlloutFinishText_Pc{character:00}");
         }
-        public static string GetAwfulAOA(Character character)
+        public static string GetAwfulAOA(int character)
             => GetAssetPath($"/Game/Cerebral/UI/Allout/T_Btl_AlloutFinishText_Pc{character:00}");
         public static string GetAssetPath(string assetFile)
         {
