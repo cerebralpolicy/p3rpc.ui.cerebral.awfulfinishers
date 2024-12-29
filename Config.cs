@@ -66,6 +66,7 @@ namespace p3rpc.ui.cerebral.awfulfinishers.Configuration
         [DefaultValue(true)]
         public bool AigisDLCToggle { get; set; } = true;
 
+        private readonly Random rng = new Random();
         public bool ReadConfigState(Character chara)
         {
             if (this.RandomMode)
@@ -74,8 +75,8 @@ namespace p3rpc.ui.cerebral.awfulfinishers.Configuration
                 {
                     return false;
                 }
-                var rnd = new Random();
-                var coinFlip = rnd.Next(0, 1) == 1;
+
+                var coinFlip = this.rng.Next(1, 100) > 50;
                 if (coinFlip)
                 {
                     Log.Debug($"The finisher screen for {Characters.GetName(chara)} will be modified");
