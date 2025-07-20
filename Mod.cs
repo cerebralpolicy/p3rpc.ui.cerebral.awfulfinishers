@@ -59,7 +59,6 @@ namespace p3rpc.ui.cerebral.awfulfinishers
             _configuration = context.Configuration;
             _modConfig = context.ModConfig;
 
-            Project.Init(_modConfig, _modLoader,_logger);
             Log.LogLevel = _configuration.LogLevel;
 
             // For more information about this template, please see
@@ -88,6 +87,7 @@ namespace p3rpc.ui.cerebral.awfulfinishers
             
             // LOAD BASE
             var partyMemberPath = Path.Combine(modDir, "Common");
+
             UnrealEssentials.AddFromFolder(partyMemberPath);
 
             // PLEASE LET THIS WORK
@@ -127,21 +127,13 @@ namespace p3rpc.ui.cerebral.awfulfinishers
             else if (character == 11)
             {
                 var vanillaAsset = GetBaseAOA(character);
-                var awfulAsset = GetAwfulAOA(character);
-                if (_configuration.FrenchMetis)
-                {
-                    awfulAsset = $"{GetAwfulAOA(character)}_FR";
-                }
+                var awfulAsset = GetAwfulAOA(character,_configuration.FrenchMetis);
                 Unreal.AssignFName(NAME, vanillaAsset, awfulAsset);
             }
             else
             {
                 var vanillaAsset = GetBaseAOA(character);
-                var awfulAsset = GetAwfulAOA(character);
-                if (UseKotone)
-                {
-                    awfulAsset = $"{GetAwfulAOA(character)}_FemC";
-                }
+                var awfulAsset = GetAwfulAOA(character,UseKotone);
                 Unreal.AssignFName(NAME, vanillaAsset, awfulAsset);
             }
         } 
@@ -162,8 +154,13 @@ namespace p3rpc.ui.cerebral.awfulfinishers
                 return GetAssetPath($"/Game/Astrea/Battle/Allout/Materials/Finish2D/T_Btl_AlloutFinishText_Pc{character:00}");
             return GetAssetPath($"/Game/Xrd777/Battle/Allout/Materials/Finish2D/T_Btl_AlloutFinishText_Pc{character:00}");
         }
-        public static string GetAwfulAOA(int character)
-            => GetAssetPath($"/Game/Cerebral/UI/Allout/T_Btl_AlloutFinishText_Pc{character:00}");
+        public static string GetAwfulAOA(int character, bool useAltFolder = false)
+        {
+            var fileName = "T_Btl_AlloutFinishText_Pc" + character.ToString("00");
+            var aoaFolder = useAltFolder ? "Allout/Alt" : "Allout";
+            return GetAssetPath($"/Game/Cerebral/UI/{aoaFolder}/{fileName}");
+        }
+
         public static string GetAssetPath(string assetFile)
         {
             var adjustedPath = assetFile.Replace('\\', '/').Replace(".uasset", string.Empty);
